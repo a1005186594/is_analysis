@@ -3,131 +3,222 @@
 |:-------:|:-------------: | :----------:|:---:|
 |201510414115|软件(本)15-1|倪嘉瑞|![flow1](../test2/touxiang.jpg)|
 
-## 图书管理系统的顺序图
+### 1.维护读者信息
 
-## 1. 借书用例
-## 1.1. 借书用例PlantUML源码
-
-``` sequence
+**1.1 维护读者信息用例PlantUML源码**
+~~~
 @startuml
-actor  借阅者 as reader
-actor  图书管理员 as admin
-activate reader
-activate admin
-reader->admin:提供需借书籍
-reader->admin:提供借书卡号
-deactivate reader
-admin->图书管理系统:login()
-activate 图书管理系统
-admin<-图书管理系统:showReaderInfo()
-admin<-图书管理系统:1.check()
-  图书管理系统->读者:getBookInfo()
-activate 读者
-图书管理系统->读者:2.check()
-deactivate 读者
-图书管理系统->book:getBookInfo()
-activate book
-deactivate book
-图书管理系统->读者:borrow()
-activate 读者
-deactivate 读者
-图书管理系统->借书记录:builtBorrowInfo()
-activate 借书记录
-deactivate 借书记录
-图书管理系统->book:updateBookInfo()
-activate book
-deactivate book
-图书管理系统->读者:updateReaderInfo()
-activate 读者
-deactivate 读者
-图书管理系统-->admin:isBorrow()
-deactivate 图书管理系统
-admin-->reader:借阅成功
-activate reader
-deactivate reader
-deactivate admin
+hide footbox
+title __维护读者信息__ 用例
+actor 图书管理员 #red
+boundary 账号判断 #red
+control 业务控制 #red
+database 操作信息 #red
+
+autonumber
+
+activate 账号判断
+	图书管理员 -> 账号判断 :  输入读者账号
+	activate 业务控制
+		账号判断 -> 业务控制 : 获取账号
+deactivate 账号判断
+		activate 操作信息
+			业务控制 -> 操作信息 : 比对账号密码合法性
+			操作信息 --> 业务控制 : 账号合法
+			图书管理员 -> 业务控制 : 输入读者新信息
+			业务控制 -> 操作信息 : 修改读者信息
+			操作信息 -> 业务控制 : 返回操作结果
+		deactivate 操作信息
+	业务控制 -> 图书管理员 : 返回维护读者信息结果
+	deactivate 业务控制
+
+
+@enduml
+~~~
+**1.2 维护读者信息用例顺序图**
+
+![维护读者信息](读者信息安全维护.png)
+
+**1.3 维护读者信息用例顺序图说明**
+1.参与者：图书管理员(actor)、账号判断(boundary)、业务控制(control)、数据库(database)。
+2.消息：(1)读者账号合法性判断：输入读者账号信息->获取账号信息->对比账号密码合法性->账号合法
+       (2)维护读者信息：输入读者新信息->修改读者信息->返回操作结果->返回维护读者信息结果
+ 
+       
+### 2.查询图书
+
+**2.1 查询图书用例PlantUML源码**
+~~~
+@startuml
+
+
+hide footbox
+title 查询图书 用例
+actor 游客 #red
+control 业务控制 #red
+database 操作信息 #red
+entity 图书信息 #red
+
+autonumber
+
+	游客 -> 业务控制 :  输入图书
+		activate 操作信息
+			业务控制 -> 操作信息 : 查询对应图书
+			操作信息 -> 业务控制 : 返回查询结果
+		deactivate 操作信息
+		activate 图书信息
+			业务控制 -> 图书信息 : 生成图书信息列表
+		deactivate 业务控制
+			图书信息 -> 游客	: 返回图书信息
+		deactivate 图书信息
+
+@enduml
+~~~
+**2.2 查询图书用例顺序图**
+
+![查询图书](查询图书.png)
+
+**2.3 查询图书用例顺序图说明**
+1.参与者：游客(actor)、业务控制(control)、数据库(database)、图书信息(entity)。
+2.消息：输入图书信息->根据图书信息查询对应图书->返回查询结果->生成图书信息列表->返回图书信息
+
+
+
+### 3.借出图书
+
+**3.1 借出图书用例PlantUML源码**
+~~~
+@startuml
+hide footbox
+title 借出图书用例
+actor 图书管理员 #red
+boundary 账号信息判断 #red
+control 业务控制 #red
+database 操作信息 #red
+
+
+autonumber
+
+activate 账号信息判断
+	图书管理员 -> 账号信息判断 :  输入读者账号
+	activate 业务控制
+		账号信息判断 -> 业务控制 : 获取账号信息
+deactivate 账号信息判断
+		activate 操作信息
+			业务控制 -> 操作信息 : 比对账号密码合法性
+			操作信息 --> 业务控制 : 账号信息合法
+			图书管理员 -> 业务控制 : 输入图书信息
+			业务控制 -> 操作信息 : 增加借阅信息
+			业务控制 -> 操作信息 : 修改图书库存
+			操作信息 -> 业务控制 : 返回操作信息
+		deactivate 操作信息
+	业务控制 -> 图书管理员 : 返回业务控制结果
+	deactivate 业务控制
+
+
 @enduml
 
+~~~
+**3.2 借出图书用例顺序图**
 
-```
+![借出图书](借出图书.png)
 
-## 1.2. 借书用例顺序图
-![class](wc1.png)
+**3.3 借出图书用例顺序图说明**
+1.参与者：图书管理员(actor)、账号判断(boundary)、业务控制(control)、数据库(database)。
+2.消息：(1)读者账号合法性判断：输入读者账号信息->获取账号信息->对比账号密码合法性->账号合法
+       (2)借出图书：输入借出图书信息->增加借阅信息->修改图书库存->返回借出结果
 
-## 1.3. 借书用例顺序图说明
-```
-1. login()：借阅者把需借图书和借书卡号提供给图书管理员，图书管理员登陆图书管理系统函数。
-2. showReaderInfo()：登录系统后通过借书卡号显示该借阅者的信息函数。
-3. check()：检查该借阅者的合法性函数。
-4. getReaderInfo()：获取读者的相关信息函数。
-5. check()：检查该读者的借书限额，是否超限的函数。
-6. getBookInfo()：获取需借图书的相关信息函数。
-7. borrow()：借阅者的借书函数。
-8. builtBookInfo()：创建借书记录的函数。
-9. updateBookInfo()：更新图书信息的函数，标记该图书的状态为已借。
-10. updateReaderInfo()：更新读者的借书信息函数。
-11. isBorrow()：借阅成功的函数。
-  ```
 
-## 2. 还书用例
-## 2.1. 还书用例PlantUML源码
 
-``` sequence
+
+### 4.归还图书
+
+**4.1 归还图书用例PlantUML源码**
+~~~
 @startuml
-actor  借阅者 as reader
-actor  图书管理员 as admin
-activate reader
-activate admin
-reader->admin:   提供还书书籍
-deactivate reader
-admin->admin:检查是否损坏书籍
-admin->图书管理系统:login()
-activate 图书管理系统
-图书管理系统->book:getBookInfo()
-activate book
-deactivate book
-图书管理系统->借书记录:getBorrowInfo()
-activate 借书记录
-图书管理系统->借书记录:getBorrowDate()
-图书管理系统->借书记录:getNowDate()
-图书管理系统->借书记录:isOverTime()
-deactivate 借书记录
-图书管理系统->还书记录:builtReturnInfo()
-activate 还书记录
-deactivate 还书记录
-图书管理系统->book:updateBookInfo()
-activate book
-deactivate book
-图书管理系统->读者:updateReaderInfo()
-activate 读者
-deactivate 读者
-图书管理系统->逾期记录:record()
-activate 逾期记录
-deactivate 逾期记录
-图书管理系统-->admin:return
-deactivate 图书管理系统
-admin-->reader:还书成功
-activate reader
-deactivate reader
-deactivate admin
+hide footbox
+title 图书归还 用例
+actor 图书管理员  #red
+boundary 账号判断 #red
+control 业务控制 #red
+database 操作信息 #red
+
+
+autonumber
+
+activate 账号判断
+	图书管理员 -> 账号判断 :  输入读者账号
+	activate 业务控制
+		账号判断 -> 业务控制 : 获取账号
+deactivate 账号判断
+		activate 操作信息
+			业务控制 -> 操作信息 : 比对账号密码合法性
+
+
+			图书管理员 -> 业务控制 : 输入归还图书的
+			业务控制 -> 操作信息 : 修改保存图书借阅
+			业务控制 -> 操作信息 : 修改图书库存
+			操作信息 -> 业务控制 : 返回操作结果
+		deactivate 操作信息
+	业务控制 -> 图书管理员 : 返回还书是否成功
+	deactivate 业务控制
+
+
 @enduml
-```
+~~~
+**4.2 归还图书用例顺序图**
 
-## 2.2. 还书用例顺序图
-![class](wc2.png)
+![归还图书](归还图书.png)
 
-## 2.3. 还书用例顺序图说明
-```
-1. login()：借阅者提供还书书籍，管理员登陆该系统的函数。
-2. getBookInfo()：扫描该书籍的书号，获取相关图书信息的函数。
-3. getBorrowInfo()：获取借阅记录的信息的函数。
-4. getBorrowDate()：获取借阅该书籍的日期的函数。
-5. getNowDate()：获取当前时间的日期的函数。
-6. isOverTime()：判断该借阅者的借书时间是否超时的函数。
-7. builtReturnInfo()：创建还书记录的函数。
-8. updateBookInfo()：更新图书馆里的书籍信息的函数，标记该图书的状态为可借。
-9. updateReaderInfo()：更新读者的还书信息的函数。
-10. record()：记录借阅者的逾期记录的函数。
-11. return：返回还书成功。
-```
+**4.3 归还图书用例顺序图说明**
+1.参与者：图书管理员(actor)、账号判断(boundary)、业务控制(control)、数据库(database)。
+2.消息：(1)读者账号合法性判断：输入读者账号信息->获取账号信息->对比账号密码合法性->账号合法
+       (2)归还图书：输入归还图书信息->删除借阅信息->修改图书库存->返回操作结果->返回归还结果
+
+
+### 5.查询借阅信息
+
+**5.1 查询借阅信息用例PlantUML源码**
+~~~
+@startuml
+
+hide footbox
+title 查询借阅信息 用例
+actor 读者 #red
+boundary 权限判断 #red
+control 业务控制 #red
+database 操作信息 #red
+entity 借书记录 #red
+
+autonumber
+activate 权限判断
+	读者 -> 权限判断 :  输入账号
+	activate 业务控制
+		权限判断 -> 业务控制 : 获取账号
+deactivate 权限判断
+		activate 操作信息
+			业务控制 -> 操作信息 : 比对账号密码合法性
+			操作信息 --> 业务控制 : 账号合法，成功登录
+    读者->业务控制: 输入借阅图书信息
+	业务控制 -> 操作信息 : 查询借阅表
+	操作信息 -> 业务控制 : 返回查询结果
+	deactivate 操作信息
+	activate 借书记录
+		业务控制 -> 借书记录 : 生成借书记录列表
+	deactivate 业务控制
+		借书记录 -> 读者 : 返回图书查询结果
+	deactivate 借书记录
+
+
+@enduml
+~~~
+**5.2 查询借阅信息用例顺序图**
+
+![查询借阅信息](查询借阅信息.png)
+
+**5.3 查询借阅信息用例顺序图说明**
+1.参与者：读者(actor)、权限判断(boundary)、业务控制(control)、数据库(database)、借书记录(entity)。
+2.消息：(1)账号合法性判断：输入账号信息->获取账号信息->对比账号密码合法性->账号合法
+       (2)借书记录：查询借阅表->返回查询结果->生成借书记录列表->返回查询结果
+
 
