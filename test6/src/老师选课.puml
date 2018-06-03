@@ -1,0 +1,8 @@
+@startuml
+title 基于GitHub的实验管理平台--老师选课用例的顺序图
+actor teacher
+== 查看课程 ==
+teacher -> course : 查看课程
+== 选择课程 ==
+teacher -> course : 选择并提交课程
+@enduml

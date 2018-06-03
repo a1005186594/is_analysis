@@ -1,0 +1,10 @@
+@startuml
+title 基于GitHub的实验管理平台--学生选课用例的顺序图
+actor student
+== 查看课程 ==
+student ->course : 请求查看课程列表
+course -> teacher : 查看教师已选择课程
+teacher -> student : 将教师已选择课程显示给学生
+== 选择课程 ==
+student -> course : 选择并提交课程
+@enduml
