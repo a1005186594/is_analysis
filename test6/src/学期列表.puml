@@ -1,0 +1,11 @@
+@startuml
+title 基于GitHub的实验管理平台--学生列表用例的顺序图
+actor users
+users -> term: 查看所有学期列表
+alt 如果users是老师
+	users --> term:显示所有学期
+else 如果users是students
+    users --> term:显示所有学期
+end
+
+@enduml
